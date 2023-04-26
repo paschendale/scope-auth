@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { loginService, validateTokenService } from "../services/auth.service";
+import { loginService, authenticateService } from "../services/auth.service";
 
 export async function loginController(req: Request, res: Response) {
   const {  email, password } = req.body;
@@ -31,7 +31,7 @@ export async function loginController(req: Request, res: Response) {
   }
 }
 
-export async function validateTokenController(req: Request, res: Response) {
+export async function authenticateController(req: Request, res: Response) {
   const { apikey } = req.body
 
   if (!apikey) {
@@ -40,7 +40,7 @@ export async function validateTokenController(req: Request, res: Response) {
 
   try {
 
-    const validatedToken = await validateTokenService(apikey)
+    const validatedToken = await authenticateService(apikey)
 
     res.status(200).json(validatedToken)
   } catch (error) {

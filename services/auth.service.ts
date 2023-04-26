@@ -6,12 +6,30 @@ import { exclude } from "../utils";
 
 const prisma = new PrismaClient();
 
-export function validateTokenService(token: string): any {
+function validateTokenService(token: string): any {
 
   try {
     
     const decodedToken = jwt.verify(token, secret);
     return decodedToken
+  } catch (error) {
+    
+    throw error
+  }
+}
+
+export async function authenticateService(token: string) {
+
+  try {
+
+    const decodedToken = validateTokenService(token) 
+
+    const user = await prisma.user.findUnique({
+      where: { id_user: decodedToken.id_user },
+      include: { user_scope: { select: { scope: { select: { description: true } } } } },
+    });
+
+    return user
   } catch (error) {
     
     throw error
@@ -46,6 +64,7 @@ export async function loginService(userData: any) {
 
   const user = await prisma.user.findUnique({
     where: { email: userData.email },
+    include: { user_scope: { select: { scope: { select: { description: true } } } } },
   });
 
   if (!user) {
@@ -65,7 +84,7 @@ export async function loginService(userData: any) {
   }
 
   const token = jwt.sign(
-    { id_user: user.id_user, name: user.name, email: user.email },
+    { id_user: user.id_user },
     secret,
     { expiresIn: '1h' }
   );

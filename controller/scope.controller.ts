@@ -1,11 +1,11 @@
 import { Request, Response } from "express";
-import { createUserService, deleteUserService, getAllUsersService, getUserService } from "../services/user.service";
 import { validateMasterScopeService } from "../services/auth.service";
 import { exclude } from "../utils";
+import { createScopeService, deleteScopeService, getAllScopesService, getScopeService } from "../services/scope.service";
 
-export async function createUserController(req: Request, res: Response) {
+export async function createScopeController(req: Request, res: Response) {
 
-  const { name, email, password } = req.body;
+  const { description } = req.body;
   const { apikey } = req.headers
 
   const isMaster = await validateMasterScopeService(apikey as string)
@@ -14,30 +14,18 @@ export async function createUserController(req: Request, res: Response) {
     return res.status(401).json({message: 'Unauthorized'});
   }
 
-  if (!name) {
+  if (!description) {
       
-    return res.status(400).json({ message: 'Error: no name provided' });
-  }
-
-  if (!email) {
-    
-    return res.status(400).json({ message: 'Error: no email provided' });
-  }
-
-  if (!password) {
-    
-    return res.status(400).json({ message: 'Error: no password provided' });
+    return res.status(400).json({ message: 'Error: no description provided' });
   }
 
   try {
     
-    const user = await createUserService({
-      name: name, 
-      email: email, 
-      password: password
+    const scope = await createScopeService({
+      description: description
     })
 
-    res.status(200).json(exclude(user, ['password']))
+    res.status(200).json(scope)
   } catch (error: any) {
     
     if (error.message) {
@@ -45,11 +33,12 @@ export async function createUserController(req: Request, res: Response) {
       res.status(error.status).json({ message: error.message});
     } else {
 
-      res.status(500).json({ message: `Error creating user`});
+      res.status(500).json({ message: `Error creating scope`});
     }
   }
 }
-export async function getAllUsersController(req: Request, res: Response) {
+
+export async function getAllScopesController(req: Request, res: Response) {
   const { apikey } = req.headers
 
   const isMaster = await validateMasterScopeService(apikey as string)
@@ -60,16 +49,16 @@ export async function getAllUsersController(req: Request, res: Response) {
 
   try {
 
-    const users = await getAllUsersService()
+    const scopes = await getAllScopesService()
 
-    res.json(users.map((e: any) => exclude(e, ['password'])))
+    res.json(scopes)
   } catch (error) {
     
-    res.status(500).json({ message: `Error getting user list`})
+    res.status(500).json({ message: `Error getting scopes list`})
   }
 }
 
-export async function getUserController(req: Request, res: Response) {
+export async function getScopeController(req: Request, res: Response) {
   const { apikey } = req.headers
 
   const isMaster = await validateMasterScopeService(apikey as string)
@@ -92,22 +81,20 @@ export async function getUserController(req: Request, res: Response) {
 
   try {
 
-    const user = await getUserService(Number(id))
+    const scope = await getScopeService(Number(id))
 
-    if(!user) {
+    if(!scope) {
       return res.status(200).json({})
     }
 
-    exclude(user,['password'] as string[])
-
-    res.status(200).json(user)
+    res.status(200).json(scope)
   } catch (error) {
     
-    res.status(500).json({ message: `Error getting user`})
+    res.status(500).json({ message: `Error getting scope`})
   }
 }
 
-export async function deleteUserController(req: Request, res: Response) {
+export async function deleteScopeController(req: Request, res: Response) {
   const { apikey } = req.headers
 
   const isMaster = await validateMasterScopeService(apikey as string)
@@ -130,9 +117,9 @@ export async function deleteUserController(req: Request, res: Response) {
 
   try {
 
-    const user = await deleteUserService(Number(id))
+    const scope = await deleteScopeService(Number(id))
 
-    return res.status(201).json({message: `User with id: ${user.id_user} succesfully deleted`})
+    return res.status(201).json({message: `Scope with id: ${scope.id_scope} succesfully deleted`})
   } catch (error: any) {
     
     if (error.message) {
@@ -140,7 +127,7 @@ export async function deleteUserController(req: Request, res: Response) {
       res.status(error.status).json({ message: error.message});
     } else {
 
-      res.status(500).json({ message: `Error deleting user`})
+      res.status(500).json({ message: `Error deleting scope`})
     }
 
   }
