@@ -1,0 +1,13 @@
+version: '3'
+
+services:
+  scope-auth:
+    image: paschendale/scope-auth
+    build: .
+    environment:
+      - DATABASE_URL=postgresql://authserver:asdij1@host.docker.internal:5432/authserver?schema=auth
+      - AUTH_MASTER_EMAIL=master@master.com
+      - AUTH_MASTER_PASSWORD=123
+      - AUTH_SECRET=secret
+    ports:
+      - 3001:3000
