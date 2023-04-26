@@ -1,10 +1,8 @@
-import { PrismaClient } from "@prisma/client";
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
 import { secret } from "../app";
 import { exclude } from "../utils";
-
-const prisma = new PrismaClient();
+import { prisma } from './db';
 
 function validateTokenService(token: string): any {
 
@@ -86,7 +84,7 @@ export async function loginService(userData: any) {
   const token = jwt.sign(
     { id_user: user.id_user },
     secret,
-    { expiresIn: '1h' }
+    { expiresIn: '24h' }
   );
 
   return {

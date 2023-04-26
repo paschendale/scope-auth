@@ -1,7 +1,4 @@
-import { PrismaClient, scope } from "@prisma/client";
-import bcrypt from 'bcrypt';
-
-const prisma = new PrismaClient();
+import { prisma } from "./db";
 
 export async function createScopeService(scopeData: any) {
 
@@ -16,7 +13,6 @@ export async function createScopeService(scopeData: any) {
     return scope
   } catch (error: any) {
   
-    console.log("🚀 ~ file: scope.service.ts:18 ~ createScopeService ~ error:", error)
     throw {
       status: 500,
       message: `Error creating scope`
@@ -79,6 +75,78 @@ export async function deleteScopeService(scopeId: number) {
     })
 
     return deleted
+  } catch (error) {
+    
+    throw error
+  }
+}
+
+export async function addScopeToUserService(id_scope: number, id_user: number) {
+
+  try {
+
+    var scopeRelation = await prisma.user_scope.findFirst({
+      where: {id_user: id_user, id_scope: id_scope}
+    })
+
+    if(scopeRelation) {
+
+      return {
+        status: 200,
+        message: 'Scope ~ User relation already exists'
+      }
+    } else {
+
+      var createRelation = await prisma.user_scope.create({
+        data: {
+          id_scope,
+          id_user
+        }
+      })
+
+      return createRelation
+    }
+
+  } catch (error: any) {
+
+    if (error.code === 'P2003') {
+
+      throw {
+        status: 400,
+        message: 'Provided id_user or id_scope does not exist'
+      }
+    }
+    
+    throw error
+  }
+}
+
+export async function removeScopeFromUserService(id_scope: number, id_user: number) {
+
+  try {
+
+    var scopeRelation = await prisma.user_scope.findFirst({
+      where: {id_user: id_user, id_scope: id_scope}
+    })
+
+    if(!scopeRelation) {
+
+      throw {
+        status: 200,
+        message: 'Provided scope ~ User relation doesn`t exists'
+      }
+    } else {
+
+      var deleteRelation = await prisma.user_scope.deleteMany({
+        where: {
+          id_scope: id_scope,
+          id_user: id_user
+        }
+      })
+
+      return deleteRelation
+    }
+
   } catch (error) {
     
     throw error

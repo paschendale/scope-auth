@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import { loginService, authenticateService } from "../services/auth.service";
 
 export async function loginController(req: Request, res: Response) {
-  const {  email, password } = req.body;
+  const { email, password } = req.body;
 
   if (!email) {
     
