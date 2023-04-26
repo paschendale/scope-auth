@@ -40,10 +40,10 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USER  }}
           password: ${{ secrets.DOCKERHUB_PASSWORD  }}
       
-      - name: Build and push latest base image
+      - name: Build and push image
         uses: docker/build-push-action@v2
         with:
-          file: Dockerfile.base
+          file: Dockerfile
           push: true
           tags: |
             paschendale/scope-auth:latest
