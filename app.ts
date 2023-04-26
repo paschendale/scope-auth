@@ -3,6 +3,9 @@ import cors from 'cors';
 import bcrypt from 'bcrypt';
 import { PrismaClient } from '@prisma/client';
 import { router } from "./routes/routes"
+import swaggerJSDoc from 'swagger-jsdoc';
+import swaggerUi from 'swagger-ui-express';
+import options from './swagger.config';
 
 const prisma = new PrismaClient();
 const app = express();
@@ -58,3 +61,6 @@ if (process.env.AUTH_MASTER_EMAIL && process.env.AUTH_MASTER_PASSWORD) {
 
 app.listen(3000, () => console.log('scope-auth server running on port 3000'));
 app.use(`/api`,router)
+
+const specs = swaggerJSDoc(options);
+app.use('/docs', swaggerUi.serve, swaggerUi.setup(specs));
