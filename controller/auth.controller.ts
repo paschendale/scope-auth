@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import { loginService, authenticateService } from "../services/auth.service";
+import { exclude } from "../utils";
 
 export async function loginController(req: Request, res: Response) {
   const { email, password } = req.body;
@@ -42,7 +43,7 @@ export async function authenticateController(req: Request, res: Response) {
 
     const validatedToken = await authenticateService(apikey)
 
-    res.status(200).json(validatedToken)
+    res.status(200).json(exclude(validatedToken,['password']))
   } catch (error) {
 
     res.status(401).json({ message: 'Invalid token' });
