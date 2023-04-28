@@ -1,6 +1,6 @@
 {
   "name": "scope-auth",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A simple Node.ts authentication and scope provider wrapped in a express server",
   "main": "app.js",
   "scripts": {
