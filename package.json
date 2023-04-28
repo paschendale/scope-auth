@@ -5,7 +5,8 @@
   "main": "app.js",
   "scripts": {
     "start": "ts-node-dev app.ts",
-    "docker:start": "npx prisma db pull && npx prisma generate && ts-node-dev app.ts",
+    "start:prod": "ts-node --transpile-only app.ts",
+    "docker:start": "npx prisma db pull && npx prisma generate && ts-node --transpile-only app.ts",
     "docker:build": "docker build . -t paschendale/scope-auth",
     "docker:push": "docker push paschendale/scope-auth",
     "docker:run": "docker run paschendale/scope-auth -p 3000:3000 -v ./env:/app/.env",
